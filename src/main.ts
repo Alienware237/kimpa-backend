@@ -1,0 +1,46 @@
+import { NestFactory } from '@nestjs/core';
+import { AppModule } from './app.module';
+import { ValidatePipe } from "./core/constants/validate.pipe";
+import * as express from 'express'
+import {ExpressAdapter} from "@nestjs/platform-express";
+import * as dotenv from 'dotenv';
+import {ElasticsearchIndexingService} from "./Services/elasticsearch/elasticsearch.service";
+import * as sessions from "express-session";
+import * as cookieParser from "cookie-parser";
+
+async function bootstrap() {
+
+    // a variable to save a session
+    let session;
+
+    const server = express();
+  dotenv.config(); // Load environment variables from .env file
+  const app = await NestFactory.create(AppModule, new ExpressAdapter(server));
+  app.setGlobalPrefix('api/for/le')
+  app.useGlobalPipes(new ValidatePipe());
+
+  // Set up CORS
+  app.enableCors();
+
+  // Increase the payload size limit to 10MB
+  app.use(express.json({ limit: '10mb' }));
+
+  const indexingService = app.get(ElasticsearchIndexingService);
+  await indexingService.fetchAllProduct();
+
+  // Configure cookie parsing middleware
+  app.use(cookieParser());
+
+  // Configure sessions middleware
+  app.use(
+      sessions({
+        secret: 'Kimpa-secret-key', // Change this to a secure secret
+        resave: false,
+        saveUninitialized: false,
+        cookie: { maxAge: 1000*20 }, // Set 'secure' to true in a production environment with HTTPS
+      }),
+  );
+
+  await app.listen(3001);
+}
+bootstrap();

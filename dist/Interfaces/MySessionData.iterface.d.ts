@@ -1,0 +1,3 @@
+interface MySessionData {
+    user: any;
+}
