@@ -30,7 +30,7 @@ export const databaseProviders = [
                 default:
                     config = databaseConfig.development;
             }
-            const sequelize = new Sequelize('dwhshop', 'dwhshop', 'Kimpa-shopping', {dialect: "mysql", host: 'localhost', port: 3307});
+            const sequelize = new Sequelize('sql11651249', 'sql11651249', 'D6a7t7a7base$', {dialect: "mysql", host: 'localhost', port: 3307});
             sequelize.addModels([Post, Administrator, User, Product, Order, OrderItem, Review, Comment, Cart, CartItem]);
             await sequelize.sync();
             return sequelize;
