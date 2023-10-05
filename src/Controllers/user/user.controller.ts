@@ -7,8 +7,7 @@ import {
     Param,
     Patch,
     Post,
-    Put,
-    Req, Request
+    Put
 } from "@nestjs/common";
 import {UserService} from "../../Services/user/user.service";
 import {Product} from "../../Modells/product.entity";

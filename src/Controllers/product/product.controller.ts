@@ -57,8 +57,7 @@ export class ProductController {
         })
     })) // Use 'files' instead of 'file'
     async create(@Body('productDto') productDto: any,
-           @UploadedFiles() files: Array<Express.Multer.File>,
-           @Req() request: Request,
+           @UploadedFiles() files: Array<Express.Multer.File>
            ) {
         try {
 
