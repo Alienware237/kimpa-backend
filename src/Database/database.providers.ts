@@ -30,7 +30,7 @@ export const databaseProviders = [
                 default:
                     config = databaseConfig.development;
             }
-            const sequelize = new Sequelize('sql11651249', 'sql11651249', 'D6a7t7a7base$', {dialect: "mysql", host: 'sql11.freesqldatabase.com', port: 3306});
+            const sequelize = new Sequelize('sql11651249', 'sql11651249', 'FLDppa5gCh', {dialect: "mysql", host: 'sql11.freesqldatabase.com', port: 3306});
             sequelize.addModels([Post, Administrator, User, Product, Order, OrderItem, Review, Comment, Cart, CartItem]);
             await sequelize.sync();
             return sequelize;
