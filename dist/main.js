@@ -7,10 +7,8 @@ const express = require("express");
 const platform_express_1 = require("@nestjs/platform-express");
 const dotenv = require("dotenv");
 const elasticsearch_service_1 = require("./Services/elasticsearch/elasticsearch.service");
-const sessions = require("express-session");
 const cookieParser = require("cookie-parser");
 async function bootstrap() {
-    let session;
     const server = express();
     dotenv.config();
     const app = await core_1.NestFactory.create(app_module_1.AppModule, new platform_express_1.ExpressAdapter(server));
@@ -21,13 +19,7 @@ async function bootstrap() {
     const indexingService = app.get(elasticsearch_service_1.ElasticsearchIndexingService);
     await indexingService.fetchAllProduct();
     app.use(cookieParser());
-    app.use(sessions({
-        secret: 'Kimpa-secret-key',
-        resave: false,
-        saveUninitialized: false,
-        cookie: { maxAge: 1000 * 20 },
-    }));
-    await app.listen(3001);
+    await app.listen(3002);
 }
 bootstrap();
 //# sourceMappingURL=main.js.map

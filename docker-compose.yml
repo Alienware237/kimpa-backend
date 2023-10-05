@@ -1,0 +1,75 @@
+version: '3.8'
+
+services:
+  database:
+    image: mariadb:10.7.3
+    command: --default-authentication-plugin=mysql_native_password
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: Kimpa
+      MYSQL_DATABASE: dwhshop
+      MYSQL_USER: dwhshop
+      MYSQL_PASSWORD: Kimpa-shopping
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "--silent" ]
+    networks:
+      - nesjs-network
+    ports:
+      - "3307:3306"
+  adminer:
+    image: phpmyadmin/phpmyadmin
+    environment:
+      MYSQL_ROOT_PASSWORD: Kimpa
+      MYSQL_DATABASE: dwhshop
+      MYSQL_USER: dwhshop
+      MYSQL_PASSWORD: Kimpa-shopping
+      PMA_HOST: database
+    restart: always
+    networks:
+      - nesjs-network
+    ports:
+      - 8080:80
+  shop-server:
+    container_name: nestjs_page-server
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    volumes:
+      - .:/usr/src/app/shop_server
+      - /usr/src/app/shop_server/node_modules
+    command: npm run start:debug
+      - 3001:3000
+      - 9220:9229
+    networks:
+      - nesjs-network
+    restart: unless-stopped
+
+  prod:
+    container_name: nestjs_page_prod
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: npm run start:prod
+    ports:
+      - 3000:3000
+      - 9229:9229
+    networks:
+      - nesjs-network
+    volumes:
+      - .:/usr/src/app/shop_server
+      - /usr/src/app/shop_server/node_modules
+    restart: unless-stopped
+
+  elasticsearch:
+    build:
+      dockerfile: ./elasticsearch/Dockerfile
+      context: .
+    container_name: elasticsearch
+    environment:
+      - discovery.type=single-node
+      - network.host=0.0.0.0
+    ports:
+      - 9200:9200
+
+networks:
+  nesjs-network:
