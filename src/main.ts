@@ -7,7 +7,6 @@ import * as dotenv from 'dotenv';
 import {ElasticsearchIndexingService} from "./Services/elasticsearch/elasticsearch.service";
 import * as sessions from "express-session";
 import * as cookieParser from "cookie-parser";
-import * as cors from "cors"
 
 async function bootstrap() {
 
@@ -18,11 +17,12 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidatePipe());
 
   // Configure CORS to allow requests from your Angular app's origin
-  app.use(cors({
+  app.enableCors({
     origin: 'https://kimpa-africa-online-shop.onrender.com', // Replace with your Angular app's origin
-    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    methods: ['GET','HEAD','PUT','PATCH','POST','DELETE'],
+    allowedHeaders: 'Authorization, Content-Type',
     credentials: true, // Enable sending cookies in cross-origin requests (if needed)
-  }));
+  });
 
   // Increase the payload size limit to 10MB
   app.use(express.json({ limit: '10mb' }));
@@ -33,6 +33,6 @@ async function bootstrap() {
   // Configure cookie parsing middleware
   app.use(cookieParser());
 
-  await app.listen(3002);
+  await app.listen(300);
 }
 bootstrap();
