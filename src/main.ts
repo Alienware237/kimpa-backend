@@ -17,11 +17,11 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidatePipe());
 
   // Configure CORS to allow requests from your Angular app's origin
-  app.enableCors({
-    origin: 'https://kimpa-africa-online-shop.onrender.com', // Replace with your Angular app's origin
-    methods: ['GET','HEAD','PUT','PATCH','POST','DELETE'],
-    allowedHeaders: 'Authorization, Content-Type',
-    credentials: true, // Enable sending cookies in cross-origin requests (if needed)
+  app.use((req, res, next) => {
+    res.header('Access-Control-Allow-Origin', 'https://kimpa-africa-online-shop.onrender.com');
+    res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
+    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    next();
   });
 
   // Increase the payload size limit to 10MB
@@ -33,6 +33,6 @@ async function bootstrap() {
   // Configure cookie parsing middleware
   app.use(cookieParser());
 
-  await app.listen(300);
+  await app.listen(3002);
 }
 bootstrap();
