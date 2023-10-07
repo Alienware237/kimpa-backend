@@ -18,7 +18,8 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidatePipe());
 
   // Configure CORS to allow requests from your Angular app's origin
-  app.use(cors());
+  // Set up CORS
+  app.enableCors();
 
   // Increase the payload size limit to 10MB
   app.use(express.json({ limit: '10mb' }));
