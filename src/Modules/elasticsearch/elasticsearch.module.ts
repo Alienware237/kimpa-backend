@@ -8,7 +8,7 @@ import {ConfigModule, ConfigService} from "@nestjs/config";
             imports: [ConfigModule.forRoot({isGlobal: true})],
             inject: [ConfigService],
             useFactory: (configService: ConfigService) => ({
-                node: '127.0.0.1:9200',
+                node: 'http://127.0.0.1:9200',
             }),
         }),
     ],
