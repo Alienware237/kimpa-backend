@@ -8,7 +8,7 @@ import {ConfigModule, ConfigService} from "@nestjs/config";
             imports: [ConfigModule.forRoot({isGlobal: true})],
             inject: [ConfigService],
             useFactory: (configService: ConfigService) => ({
-                node: 'http://localhost:9200',
+                node: 'https://elasticsearch-gqbn.onrender.com:9200',
             }),
         }),
     ],

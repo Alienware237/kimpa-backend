@@ -7,7 +7,6 @@ import * as dotenv from 'dotenv';
 import {ElasticsearchIndexingService} from "./Services/elasticsearch/elasticsearch.service";
 import * as sessions from "express-session";
 import * as cookieParser from "cookie-parser";
-import * as cors from "cors"
 
 async function bootstrap() {
 
