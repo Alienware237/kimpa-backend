@@ -14,6 +14,7 @@ import {cartProviders} from "../../Providers/cart.providers";
 import {ElasticsearchModule} from "../elasticsearch/elasticsearch.module";
 import {cartitemProviders} from "../../Providers/cart-item.providers";
 import {CartItemService} from "../../Services/cart-item/cart-item.service";
+import {ElasticsearchIndexingService} from "../../Services/elasticsearch/elasticsearch.service";
 
 @Module({
   imports: [ElasticsearchModule],
@@ -26,6 +27,7 @@ import {CartItemService} from "../../Services/cart-item/cart-item.service";
     CartService,
     CartItemService,
     JwtService,
+    ElasticsearchIndexingService,
     ...productProviders,
     ...administratorProviders,
     ...userProviders,

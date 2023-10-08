@@ -4,7 +4,7 @@ import { ValidatePipe } from "./core/constants/validate.pipe";
 import * as express from 'express'
 import {ExpressAdapter} from "@nestjs/platform-express";
 import * as dotenv from 'dotenv';
-import {ElasticsearchIndexingService} from "./Services/elasticsearch/elasticsearch.service";
+import {ProductService} from "./Services/product/product.service";
 import * as sessions from "express-session";
 import * as cookieParser from "cookie-parser";
 
@@ -23,8 +23,8 @@ async function bootstrap() {
   // Increase the payload size limit to 10MB
   app.use(express.json({ limit: '10mb' }));
 
-  const indexingService = app.get(ElasticsearchIndexingService);
-  await indexingService.fetchAllProduct();
+  const fetchProduct = app.get(ProductService);
+  await fetchProduct.fetchAll();
 
   // Configure cookie parsing middleware
   app.use(cookieParser());

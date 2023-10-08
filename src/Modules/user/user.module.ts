@@ -9,6 +9,7 @@ import {CartItemService} from "../../Services/cart-item/cart-item.service";
 import {ProductService} from "../../Services/product/product.service";
 import {productProviders} from "../../Providers/product.providers";
 import {ElasticsearchModule} from "../elasticsearch/elasticsearch.module";
+import {ElasticsearchIndexingService} from "../../Services/elasticsearch/elasticsearch.service";
 
 @Module({
   imports: [ElasticsearchModule],
@@ -18,6 +19,7 @@ import {ElasticsearchModule} from "../elasticsearch/elasticsearch.module";
     CartService,
     CartItemService,
     ProductService,
+    ElasticsearchIndexingService,
     ...userProviders,
     ...cartProviders,
     ...cartitemProviders,
