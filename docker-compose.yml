@@ -61,9 +61,10 @@ services:
     restart: unless-stopped
 
   elasticsearch:
+    image: elasticsearch:7.15.1  # Use the official Elasticsearch image
     build:
       dockerfile: ./elasticsearch/Dockerfile
-      context: .
+      context: ./shop_server
     container_name: elasticsearch
     environment:
       - discovery.type=single-node
