@@ -24,7 +24,7 @@ async function bootstrap() {
   app.use(express.json({ limit: '10mb' }));
 
   const fetchProduct = app.get(ProductService);
-  await fetchProduct.fetchAll();
+  //await fetchProduct.fetchAll();
 
   // Configure cookie parsing middleware
   app.use(cookieParser());

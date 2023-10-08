@@ -4,6 +4,8 @@ import {Product} from "../../Modells/product.entity";
 import {PRODUCT_REPOSITORY} from "../../core/constants";
 import {ElasticsearchService} from "@nestjs/elasticsearch";
 import {ElasticsearchIndexingService} from "../elasticsearch/elasticsearch.service";
+import {CartItem} from "../../Modells/cart_item.entity";
+import {Op} from "sequelize";
 
 @Injectable()
 export class ProductService {
@@ -75,12 +77,39 @@ export class ProductService {
         };
         //await this.elasticsearchService.createProduct(product);
         return this.productRepository.create(product)
-            .then(res => {this.elasticsearchService.fetchProductInElasticsearch(res)})
+            .then(res => {//this.elasticsearchService.fetchProductInElasticsearch(res)
+                 })
     }
 
 
     async findAllByQuery(filter: any) {
-        return await this.elasticsearchService.searchProducts(filter);
+        const where = {};
+
+        if (filter.category) {
+            where['category'] = { [Op.like]: `%${filter.category}%` };
+        }
+
+        if (filter.description) {
+            where['description'] = { [Op.like]: `%${filter.description}%` };
+        }
+
+        if (filter.minPrice) {
+            where['price'] = { [Op.gt]: filter.minPrice };
+        }
+
+        if (filter.maxPrice) {
+            if (!where['price']) {
+                where['price'] = {};
+            }
+            where['price'] = { ...where['price'], [Op.lt]: filter.maxPrice };
+        }
+
+        const findOptions = {
+            rejectOnEmpty: undefined,
+            where,
+        };
+
+        return this.productRepository.findAll<Product>(findOptions);
     }
 
     update(productId: number, updateProductDto: any) {
@@ -92,7 +121,7 @@ export class ProductService {
     }
 
     async findById(id: number) {
-        return await this.elasticsearchService.searchProductsById(id);
+        return await this.productRepository.findOne<Product>({rejectOnEmpty: undefined, where: { id }});
     }
 
     async updateProductElasticSearch(productId: string, updatedProductData: any){

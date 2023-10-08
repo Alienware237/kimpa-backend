@@ -88,10 +88,11 @@ export class ProductController {
 
                 return this.productService.update(productDto.id, productDto)
                     .then( res =>{
+                        /*
                         this.productService.updateProductElasticSearch(productDto.id, productDto)
                             .then(res => {
                                 return res
-                            })
+                            })*/
                     });
             }else {
                 const productDtoNew = new ProductDto();
@@ -177,10 +178,11 @@ export class ProductController {
         console.log('Calling update product !!!');
         return this.productService.update(+id, updateProductDto)
             .then( res =>{
+                /*
                 this.productService.updateProductElasticSearch(id, updateProductDto)
                     .then(res => {
                         return res
-                    })
+                    })*/
             });
     }
 
