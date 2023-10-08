@@ -1,14 +1,14 @@
 import { Module } from '@nestjs/common';
 import { ElasticsearchModule as NestElasticsearchModule } from '@nestjs/elasticsearch';
-import {ConfigModule, ConfigService} from "@nestjs/config";
+import { ConfigModule, ConfigService } from '@nestjs/config';
 
 @Module({
     imports: [
         NestElasticsearchModule.registerAsync({
-            imports: [ConfigModule.forRoot({isGlobal: true})],
+            imports: [ConfigModule.forRoot({ isGlobal: true })],
             inject: [ConfigService],
             useFactory: (configService: ConfigService) => ({
-                node: 'http://127.0.0.1:9200',
+                node: 'http://elasticsearch:9200', // Use the service name 'elasticsearch' here
             }),
         }),
     ],
