@@ -26,7 +26,8 @@ import {CartItemService} from "../../Services/cart-item/cart-item.service";
 import {UserService} from "../../Services/user/user.service";
 import {FilesInterceptor} from "@nestjs/platform-express";
 import {Express, Response} from "express";
-import {diskStorage} from "multer"; // Use the promises version of fs
+import {diskStorage} from "multer";
+import {BackblazeService} from "../../Services/Backblaze/backblaze.service"; // Use the promises version of fs
 
 @Controller('product')
 export class ProductController {
@@ -34,7 +35,8 @@ export class ProductController {
     constructor(private readonly productService: ProductService,
                 private readonly cartService: CartService,
                 private readonly cartItemService: CartItemService,
-                private readonly userService: UserService
+                private readonly userService: UserService,
+                private readonly backblazeService: BackblazeService
                 ) {
     }
 
@@ -69,11 +71,11 @@ export class ProductController {
             console.log('Directory Exist: ', fs.existsSync(directoryPath));
 
             // Handle uploaded files
-            console.log('Uploaded Files:', files);
-            let image: string[] = [];
-            files.forEach(fi =>{ image.push(fi.filename) })
 
-            console.log('Uploaded files name: ', image);
+            console.log('Uploaded Files:', files);
+            const imageUrls= await this.backblazeService.uploadFile('app-stored-image', files);
+
+            console.log('Uploaded files name: ', imageUrls);
 
             productDto = JSON.parse(productDto)
 
@@ -84,7 +86,7 @@ export class ProductController {
 
             if (productDto.id) { //Product exist because he has id. So let us Update ihr images
                 console.log('productDto for test of update: ', productDto);
-                productDto.image = JSON.stringify(image)
+                productDto.image = JSON.stringify(imageUrls)
 
                 return this.productService.update(productDto.id, productDto)
                     .then( res =>{
@@ -101,7 +103,7 @@ export class ProductController {
                 productDtoNew.setPrice(productDto.price);
                 productDtoNew.setNumberInStock(productDto.numberInStock);
                 productDtoNew.setCategory(productDto.category);
-                productDtoNew.setImage(JSON.stringify(image));
+                productDtoNew.setImage(JSON.stringify(imageUrls));
                 return this.productService.create(productDtoNew);
             }
 

@@ -51,6 +51,7 @@ import { OrderItemModule } from './Modules/order-item/order-item.module';
 import {OrderItemController} from "./Controllers/order-item/order-item.controller";
 import {OrderItemService} from "./Services/order-item/order-item.service";
 import {orderItemProviders} from "./Providers/order-item.providers";
+import {BackblazeService} from "./Services/Backblaze/backblaze.service";
 
 @Module({
   imports: [
@@ -104,6 +105,7 @@ import {orderItemProviders} from "./Providers/order-item.providers";
       UserService,
       JwtStrategy,
       ElasticsearchIndexingService,
+      BackblazeService,
       ...databaseProviders,
       ...postProviders,
       ...productProviders,

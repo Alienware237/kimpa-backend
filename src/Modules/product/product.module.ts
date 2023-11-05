@@ -15,6 +15,7 @@ import {ElasticsearchModule} from "../elasticsearch/elasticsearch.module";
 import {cartitemProviders} from "../../Providers/cart-item.providers";
 import {CartItemService} from "../../Services/cart-item/cart-item.service";
 import {ElasticsearchIndexingService} from "../../Services/elasticsearch/elasticsearch.service";
+import {BackblazeService} from "../../Services/Backblaze/backblaze.service";
 
 @Module({
   imports: [ElasticsearchModule],
@@ -28,6 +29,7 @@ import {ElasticsearchIndexingService} from "../../Services/elasticsearch/elastic
     CartItemService,
     JwtService,
     ElasticsearchIndexingService,
+    BackblazeService,
     ...productProviders,
     ...administratorProviders,
     ...userProviders,
