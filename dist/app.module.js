@@ -60,6 +60,7 @@ const order_item_module_1 = require("./Modules/order-item/order-item.module");
 const order_item_controller_1 = require("./Controllers/order-item/order-item.controller");
 const order_item_service_1 = require("./Services/order-item/order-item.service");
 const order_item_providers_1 = require("./Providers/order-item.providers");
+const backblaze_service_1 = require("./Services/Backblaze/backblaze.service");
 let AppModule = class AppModule {
 };
 AppModule = __decorate([
@@ -114,6 +115,7 @@ AppModule = __decorate([
             user_service_1.UserService,
             jwt_strategy_1.JwtStrategy,
             elasticsearch_service_1.ElasticsearchIndexingService,
+            backblaze_service_1.BackblazeService,
             ...database_providers_1.databaseProviders,
             ...post_providers_1.postProviders,
             ...product_providers_1.productProviders,

@@ -6,16 +6,18 @@ import { CartService } from "../../Services/cart/cart.service";
 import { CartItemService } from "../../Services/cart-item/cart-item.service";
 import { UserService } from "../../Services/user/user.service";
 import { Response } from "express";
+import { BackblazeService } from "../../Services/Backblaze/backblaze.service";
 export declare class ProductController {
     private readonly productService;
     private readonly cartService;
     private readonly cartItemService;
     private readonly userService;
-    constructor(productService: ProductService, cartService: CartService, cartItemService: CartItemService, userService: UserService);
+    private readonly backblazeService;
+    constructor(productService: ProductService, cartService: CartService, cartItemService: CartItemService, userService: UserService, backblazeService: BackblazeService);
     getAllProduct(): Promise<Product[]>;
-    create(productDto: any, files: Array<Express.Multer.File>, request: Request): Promise<void>;
+    create(productDto: any, files: Array<Express.Multer.File>): Promise<void>;
     getImage(imageName: string, res: Response): void;
-    findProductWithId(id: string): Promise<Product[]>;
+    findProductWithId(id: string): Promise<Product>;
     findProductWithUserId(userId: number): Promise<{
         user: import("../../Modells/user.entity").User;
         dataItemInCart: any[];

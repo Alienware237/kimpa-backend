@@ -32,7 +32,7 @@ exports.databaseProviders = [
                 default:
                     config = database_config_1.databaseConfig.development;
             }
-            const sequelize = new sequelize_typescript_1.Sequelize('dwhshop', 'dwhshop', 'Kimpa-shopping', { dialect: "mysql", host: 'localhost', port: 3307 });
+            const sequelize = new sequelize_typescript_1.Sequelize('by57ioggcxewlwhhlsgt', 'um5z8evficfjo3e0', 'JrsJ4DGTdHTc4x2qmpjx', { dialect: "mysql", host: 'by57ioggcxewlwhhlsgt-mysql.services.clever-cloud.com', port: 3306 });
             sequelize.addModels([post_entity_1.Post, administrator_entity_1.Administrator, user_entity_1.User, product_entity_1.Product, order_entity_1.Order, order_item_entity_1.OrderItem, review_entity_1.Review, comment_entity_1.Comment, cart_entity_1.Cart, cart_item_entity_1.CartItem]);
             await sequelize.sync();
             return sequelize;

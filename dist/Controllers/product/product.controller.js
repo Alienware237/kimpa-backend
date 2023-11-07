@@ -25,17 +25,19 @@ const cart_item_service_1 = require("../../Services/cart-item/cart-item.service"
 const user_service_1 = require("../../Services/user/user.service");
 const platform_express_1 = require("@nestjs/platform-express");
 const multer_1 = require("multer");
+const backblaze_service_1 = require("../../Services/Backblaze/backblaze.service");
 let ProductController = class ProductController {
-    constructor(productService, cartService, cartItemService, userService) {
+    constructor(productService, cartService, cartItemService, userService, backblazeService) {
         this.productService = productService;
         this.cartService = cartService;
         this.cartItemService = cartItemService;
         this.userService = userService;
+        this.backblazeService = backblazeService;
     }
     getAllProduct() {
         return this.productService.findAll();
     }
-    async create(productDto, files, request) {
+    async create(productDto, files) {
         try {
             const directoryPath = path.join(__dirname, '../../images');
             if (!fs.existsSync(directoryPath)) {
@@ -43,8 +45,7 @@ let ProductController = class ProductController {
             }
             console.log('Directory Exist: ', fs.existsSync(directoryPath));
             console.log('Uploaded Files:', files);
-            let image = [];
-            files.forEach(fi => { image.push(fi.filename); });
+            const image = await this.backblazeService.uploadFile('app-stored-image', files);
             console.log('Uploaded files name: ', image);
             productDto = JSON.parse(productDto);
             console.log('Product DTO:', productDto);
@@ -53,10 +54,6 @@ let ProductController = class ProductController {
                 productDto.image = JSON.stringify(image);
                 return this.productService.update(productDto.id, productDto)
                     .then(res => {
-                    this.productService.updateProductElasticSearch(productDto.id, productDto)
-                        .then(res => {
-                        return res;
-                    });
                 });
             }
             else {
@@ -126,10 +123,6 @@ let ProductController = class ProductController {
         console.log('Calling update product !!!');
         return this.productService.update(+id, updateProductDto)
             .then(res => {
-            this.productService.updateProductElasticSearch(id, updateProductDto)
-                .then(res => {
-                return res;
-            });
         });
     }
 };
@@ -155,10 +148,8 @@ __decorate([
     })),
     __param(0, (0, common_1.Body)('productDto')),
     __param(1, (0, common_1.UploadedFiles)()),
-    __param(2, (0, common_1.Req)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object, Array,
-        Request]),
+    __metadata("design:paramtypes", [Object, Array]),
     __metadata("design:returntype", Promise)
 ], ProductController.prototype, "create", null);
 __decorate([
@@ -218,7 +209,8 @@ ProductController = __decorate([
     __metadata("design:paramtypes", [product_service_1.ProductService,
         cart_service_1.CartService,
         cart_item_service_1.CartItemService,
-        user_service_1.UserService])
+        user_service_1.UserService,
+        backblaze_service_1.BackblazeService])
 ], ProductController);
 exports.ProductController = ProductController;
 //# sourceMappingURL=product.controller.js.map

@@ -19,7 +19,7 @@ ElasticsearchModule = __decorate([
                 imports: [config_1.ConfigModule.forRoot({ isGlobal: true })],
                 inject: [config_1.ConfigService],
                 useFactory: (configService) => ({
-                    node: 'http://localhost:9200',
+                    node: 'http://elasticsearch:9200',
                 }),
             }),
         ],

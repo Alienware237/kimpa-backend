@@ -16,6 +16,7 @@ const cart_providers_1 = require("../../Providers/cart.providers");
 const product_service_1 = require("../../Services/product/product.service");
 const product_providers_1 = require("../../Providers/product.providers");
 const elasticsearch_module_1 = require("../elasticsearch/elasticsearch.module");
+const elasticsearch_service_1 = require("../../Services/elasticsearch/elasticsearch.service");
 let CartItemModule = class CartItemModule {
 };
 CartItemModule = __decorate([
@@ -26,6 +27,7 @@ CartItemModule = __decorate([
             cart_item_service_1.CartItemService,
             cart_service_1.CartService,
             product_service_1.ProductService,
+            elasticsearch_service_1.ElasticsearchIndexingService,
             ...cart_item_providers_1.cartitemProviders,
             ...cart_providers_1.cartProviders,
             ...product_providers_1.productProviders

@@ -15,11 +15,16 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.ProductService = void 0;
 const common_1 = require("@nestjs/common");
 const constants_1 = require("../../core/constants");
-const elasticsearch_1 = require("@nestjs/elasticsearch");
+const elasticsearch_service_1 = require("../elasticsearch/elasticsearch.service");
+const sequelize_1 = require("sequelize");
 let ProductService = class ProductService {
     constructor(productRepository, elasticsearchService) {
         this.productRepository = productRepository;
         this.elasticsearchService = elasticsearchService;
+    }
+    async fetchAll() {
+        const allProduct = await this.productRepository.findAll();
+        await this.elasticsearchService.fetchAllProduct(allProduct);
     }
     async findAll() {
         return await this.productRepository.findAll();
@@ -34,15 +39,32 @@ let ProductService = class ProductService {
             category: productDto.getCategory(),
             image: productDto.getImage()
         };
-        await this.elasticsearchService.index({
-            index: 'product',
-            body: product,
-        });
         return this.productRepository.create(product)
-            .then(res => { this.fetchProductInElasticsearch(res); });
+            .then(res => {
+        });
     }
     async findAllByQuery(filter) {
-        return await this.searchProducts(filter);
+        const where = {};
+        if (filter.category) {
+            where['category'] = { [sequelize_1.Op.like]: `%${filter.category}%` };
+        }
+        if (filter.description) {
+            where['description'] = { [sequelize_1.Op.like]: `%${filter.description}%` };
+        }
+        if (filter.minPrice) {
+            where['price'] = { [sequelize_1.Op.gt]: filter.minPrice };
+        }
+        if (filter.maxPrice) {
+            if (!where['price']) {
+                where['price'] = {};
+            }
+            where['price'] = Object.assign(Object.assign({}, where['price']), { [sequelize_1.Op.lt]: filter.maxPrice });
+        }
+        const findOptions = {
+            rejectOnEmpty: undefined,
+            where,
+        };
+        return this.productRepository.findAll(findOptions);
     }
     update(productId, updateProductDto) {
         return this.productRepository.upsert(updateProductDto);
@@ -51,119 +73,16 @@ let ProductService = class ProductService {
         return `This action removes a #${id} product`;
     }
     async findById(id) {
-        return await this.searchProductsById(id);
-    }
-    async searchProducts(filter) {
-        const searchResponse = await this.elasticsearchService.search({
-            index: 'product',
-            body: {
-                query: {
-                    bool: {
-                        must: [
-                            filter.category ? { match: { category: filter.category } } : null,
-                            filter.description ? { match: { description: filter.description } } : null,
-                            filter.minPrice ? {
-                                range: {
-                                    price: {
-                                        gt: filter.price
-                                    }
-                                }
-                            } : null,
-                            filter.maxPrice ? {
-                                range: {
-                                    price: {
-                                        lt: filter.price
-                                    }
-                                }
-                            } : null
-                        ].filter(Boolean)
-                    }
-                }
-            }
-        });
-        const hits = searchResponse.hits.hits;
-        let arrays = hits.map(hit => hit._source);
-        arrays = arrays.filter(function (elem, index, self) {
-            return index === self.indexOf(elem);
-        });
-        console.log('searchResponse.hits.hits: ', arrays);
-        return arrays;
-    }
-    async searchProductsById(id) {
-        console.log('searchProductsById: ', id);
-        const searchResponse = await this.elasticsearchService.search({
-            index: 'product',
-            body: {
-                query: {
-                    bool: {
-                        should: [{ match: { id: id } }],
-                    },
-                },
-            },
-        });
-        const hits = searchResponse.hits.hits;
-        return hits.map((hit) => hit._source);
-    }
-    async fetchProductInElasticsearch(product) {
-        console.log('Fetched Data: ', product);
-        const bulkBody = [];
-        bulkBody.push({
-            index: {
-                _index: 'product',
-                _type: '_doc',
-                _id: product.id,
-            },
-        });
-        bulkBody.push(product);
-        const bulkResponse = product ? await this.elasticsearchService.bulk({ body: bulkBody }) : 'No Product giving in Data Warehouse !';
-        console.log('bulkResponse: ', bulkResponse);
+        return await this.productRepository.findOne({ rejectOnEmpty: undefined, where: { id } });
     }
     async updateProductElasticSearch(productId, updatedProductData) {
-        try {
-            const updateResponse = await this.elasticsearchService.update({
-                index: 'product',
-                id: productId,
-                body: {
-                    doc: updatedProductData,
-                },
-            });
-            if (updateResponse.result === 'updated') {
-                console.log(`Product with ID ${productId} has been updated.`);
-                return updatedProductData;
-            }
-            else {
-                console.error(`Failed to update product with ID ${productId}.`);
-            }
-        }
-        catch (error) {
-            console.error(`Error updating product: ${error}`);
-            throw error;
-        }
-    }
-    async deleteProductElasticSearch(productId) {
-        try {
-            const deleteResponse = await this.elasticsearchService.delete({
-                index: 'product',
-                id: productId,
-            });
-            if (deleteResponse.result === 'deleted') {
-                console.log(`Product with ID ${productId} has been deleted.`);
-                return 'Product with ID ${productId} has been deleted.';
-            }
-            else {
-                console.error(`Failed to delete product with ID ${productId}.`);
-            }
-        }
-        catch (error) {
-            console.error(`Error deleting product: ${error}`);
-            throw error;
-        }
+        await this.elasticsearchService.updateProductElasticSearch(productId, updatedProductData);
     }
 };
 ProductService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, common_1.Inject)(constants_1.PRODUCT_REPOSITORY)),
-    __metadata("design:paramtypes", [Object, elasticsearch_1.ElasticsearchService])
+    __metadata("design:paramtypes", [Object, elasticsearch_service_1.ElasticsearchIndexingService])
 ], ProductService);
 exports.ProductService = ProductService;
 //# sourceMappingURL=product.service.js.map
