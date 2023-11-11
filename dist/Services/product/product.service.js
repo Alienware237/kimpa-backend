@@ -45,21 +45,29 @@ let ProductService = class ProductService {
     }
     async findAllByQuery(filter) {
         const where = {};
+        const maxPrice = +filter.maxPrice;
+        const minPrice = +filter.minPrice;
+        console.log('filter for all: ', filter);
         if (filter.category) {
-            where['category'] = { [sequelize_1.Op.like]: `%${filter.category}%` };
+            console.log('filter for category !!');
+            where['category'] = { [sequelize_1.Op.eq]: `${filter.category}` };
         }
         if (filter.description) {
+            console.log('filter for description !!');
             where['description'] = { [sequelize_1.Op.like]: `%${filter.description}%` };
         }
-        if (filter.minPrice) {
-            where['price'] = { [sequelize_1.Op.gt]: filter.minPrice };
+        if (filter.minPrice && filter.maxPrice) {
+            where['price'] = { [sequelize_1.Op.gte]: minPrice, [sequelize_1.Op.lte]: maxPrice };
         }
-        if (filter.maxPrice) {
-            if (!where['price']) {
-                where['price'] = {};
-            }
-            where['price'] = Object.assign(Object.assign({}, where['price']), { [sequelize_1.Op.lt]: filter.maxPrice });
+        else if (filter.minPrice) {
+            console.log('filter for minPrice !!', minPrice);
+            where['price'] = { [sequelize_1.Op.gte]: minPrice };
         }
+        else if (filter.maxPrice) {
+            console.log('filter for maxPrice !!', maxPrice);
+            where['price'] = { [sequelize_1.Op.lte]: maxPrice };
+        }
+        console.log('where: ', where);
         const findOptions = {
             rejectOnEmpty: undefined,
             where,

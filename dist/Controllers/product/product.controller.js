@@ -45,13 +45,13 @@ let ProductController = class ProductController {
             }
             console.log('Directory Exist: ', fs.existsSync(directoryPath));
             console.log('Uploaded Files:', files);
-            const image = await this.backblazeService.uploadFile('app-stored-image', files);
-            console.log('Uploaded files name: ', image);
+            const imageUrls = await this.backblazeService.uploadFile('app-stored-image', files);
+            console.log('Uploaded files name: ', imageUrls);
             productDto = JSON.parse(productDto);
             console.log('Product DTO:', productDto);
             if (productDto.id) {
                 console.log('productDto for test of update: ', productDto);
-                productDto.image = JSON.stringify(image);
+                productDto.image = JSON.stringify(imageUrls);
                 return this.productService.update(productDto.id, productDto)
                     .then(res => {
                 });
@@ -63,7 +63,7 @@ let ProductController = class ProductController {
                 productDtoNew.setPrice(productDto.price);
                 productDtoNew.setNumberInStock(productDto.numberInStock);
                 productDtoNew.setCategory(productDto.category);
-                productDtoNew.setImage(JSON.stringify(image));
+                productDtoNew.setImage(JSON.stringify(imageUrls));
                 return this.productService.create(productDtoNew);
             }
         }

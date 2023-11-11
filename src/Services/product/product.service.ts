@@ -84,25 +84,31 @@ export class ProductService {
 
     async findAllByQuery(filter: any) {
         const where = {};
+        const maxPrice = +filter.maxPrice;
+        const minPrice = +filter.minPrice;
 
+        console.log('filter for all: ', filter);
         if (filter.category) {
-            where['category'] = { [Op.like]: `%${filter.category}%` };
+            console.log('filter for category !!');
+            where['category'] = { [Op.eq]: `${filter.category}` };
         }
 
         if (filter.description) {
+            console.log('filter for description !!');
             where['description'] = { [Op.like]: `%${filter.description}%` };
         }
 
-        if (filter.minPrice) {
-            where['price'] = { [Op.gt]: filter.minPrice };
+        if (filter.minPrice && filter.maxPrice) {
+            where['price'] = { [Op.gte]: minPrice, [Op.lte]: maxPrice };
+        } else if (filter.minPrice) {
+            console.log('filter for minPrice !!', minPrice);
+            where['price'] = { [Op.gte]: minPrice };
+        }else if (filter.maxPrice) {
+            console.log('filter for maxPrice !!', maxPrice);
+            where['price'] = { [Op.lte]: maxPrice };
         }
 
-        if (filter.maxPrice) {
-            if (!where['price']) {
-                where['price'] = {};
-            }
-            where['price'] = { ...where['price'], [Op.lt]: filter.maxPrice };
-        }
+        console.log('where: ', where);
 
         const findOptions = {
             rejectOnEmpty: undefined,
