@@ -32,6 +32,7 @@ let UserController = class UserController {
     }
     create(userDto) {
         try {
+            console.log('try to create a User !!!!!');
             const userData = JSON.parse(userDto.User);
             const userDto_new = new user_dto_1.UserDto();
             if (userData.cookie) {
@@ -104,7 +105,7 @@ let UserController = class UserController {
         }
     }
     async getUserByCookie(cookie) {
-        console.log('param1: ', cookie);
+        console.log('param1 cookie: ', cookie);
         try {
             let user = (await this.userService.findOneByCookie(cookie));
             user = user ? user.dataValues : null;
@@ -116,8 +117,11 @@ let UserController = class UserController {
                 const itemInCarts = await this.cartItemsService.findAll(cart.id);
                 console.log('itemInCarts: ', itemInCarts);
                 for (const itemC of itemInCarts) {
-                    const searchResult = await this.productService.findById(itemC.dataValues.productId);
-                    listOfArticle.push(searchResult[0]);
+                    await this.productService.findById(itemC.dataValues.productId).then(product => {
+                        listOfArticle.push(product.dataValues);
+                    }).catch(err => {
+                        console.log('Error occured by finding a product by id from ItemCart list:', err);
+                    });
                 }
                 console.log('listOfArticle: ', listOfArticle);
                 for (const itemC of itemInCarts) {

@@ -38,6 +38,7 @@ export class UserController {
     @Post('create')
     create(@Body() userDto: any) {
         try {
+            console.log('try to create a User !!!!!');
             const userData = JSON.parse(userDto.User);
             const userDto_new = new UserDto();
             if (userData.cookie) {
@@ -125,7 +126,7 @@ export class UserController {
     async getUserByCookie(
         @Param('cookie') cookie: string,
     ) {
-        console.log('param1: ', cookie);
+        console.log('param1 cookie: ', cookie);
         try {
             let user = (await this.userService.findOneByCookie(cookie));
             user = user ? user.dataValues: null;
@@ -139,8 +140,11 @@ export class UserController {
 
                 console.log('itemInCarts: ', itemInCarts);
                 for (const itemC of itemInCarts) {
-                    const searchResult = await this.productService.findById(itemC.dataValues.productId);
-                    listOfArticle.push(searchResult[0]);
+                    await this.productService.findById(itemC.dataValues.productId).then( product=> {
+                        listOfArticle.push(product.dataValues);
+                    }).catch( err => {
+                        console.log('Error occured by finding a product by id from ItemCart list:', err);
+                    });
                 }
 
                 console.log('listOfArticle: ', listOfArticle);
