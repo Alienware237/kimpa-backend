@@ -19,7 +19,7 @@ export declare class ProductController {
     getImage(imageName: string, res: Response): void;
     findProductWithId(id: string): Promise<Product>;
     findProductWithUserId(userId: number): Promise<{
-        user: import("../../Modells/user.entity").User;
+        user: any;
         dataItemInCart: any[];
     }>;
     findOne(filter: any): Promise<Product[]>;
