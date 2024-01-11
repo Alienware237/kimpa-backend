@@ -9,21 +9,32 @@ export class MailService {
         // Set up nodemailer transporter (use your email and SMTP server details)
         this.transporter = nodemailer.createTransport({
             service: 'gmail',
+            host: 'smtp.gmail.com',
+            port: 465,
+            secure: true,
             auth: {
-                user: 'talomkevin2017@gmail.com',
-                pass: 'O2r0n1e7l?',
+                user: 'piamkevin67@gmail.com',
+                pass: 'jqxk gyqn nzoh esty',
             },
         });
     }
 
     async sendMail(to: string, subject: string, text: string): Promise<void> {
         const mailOptions = {
-            from: 'talomkevin2017@gmail.com',
+            from: 'piamkevin67@gmail.com',
             to,
             subject,
             text,
         };
 
-        await this.transporter.sendMail(mailOptions);
+        await this.transporter.sendMail(mailOptions, (err, info) => {
+            if (err) {
+                console.log(err);
+                return true;
+            } else {
+                console.log('Email sent: ' + info.response);
+                return false;
+            }
+        });
     }
 }

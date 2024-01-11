@@ -6,11 +6,11 @@ export class MailControllerController {
     constructor(private readonly mailService: MailService) {}
 
     @Post('/send-email')
-    async sendEmail(@Body() emailData: {from: string, subject: string, text: string}): Promise<string> {
+    async sendEmail(@Body() emailData: {to: string, subject: string, text: string}) {
         try {
-            const { from, subject, text } = emailData;
-            await this.mailService.sendMail(from, subject, text);
-            return 'Email sent successfully';
+            const { to, subject, text } = emailData;
+            await this.mailService.sendMail(to, subject, text);
+            return {response: 'Email sent successfully !'};
         } catch (error) {
             throw new Error(`Failed to send email: ${error.message}`);
         }
