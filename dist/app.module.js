@@ -61,6 +61,8 @@ const order_item_controller_1 = require("./Controllers/order-item/order-item.con
 const order_item_service_1 = require("./Services/order-item/order-item.service");
 const order_item_providers_1 = require("./Providers/order-item.providers");
 const backblaze_service_1 = require("./Services/Backblaze/backblaze.service");
+const mail_controller_controller_1 = require("./Controllers/mail-controller/mail-controller.controller");
+const mail_service_1 = require("./Services/mails/mail.service");
 let AppModule = class AppModule {
 };
 AppModule = __decorate([
@@ -98,7 +100,8 @@ AppModule = __decorate([
             order_item_controller_1.OrderItemController,
             review_controller_1.ReviewController,
             user_controller_1.UserController,
-            administrator_controller_1.AdministratorController
+            administrator_controller_1.AdministratorController,
+            mail_controller_controller_1.MailControllerController
         ],
         providers: [app_service_1.AppService,
             post_service_1.PostService,
@@ -116,6 +119,7 @@ AppModule = __decorate([
             jwt_strategy_1.JwtStrategy,
             elasticsearch_service_1.ElasticsearchIndexingService,
             backblaze_service_1.BackblazeService,
+            mail_service_1.MailService,
             ...database_providers_1.databaseProviders,
             ...post_providers_1.postProviders,
             ...product_providers_1.productProviders,
