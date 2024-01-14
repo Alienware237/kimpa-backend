@@ -6,13 +6,15 @@ import {UpdateOrderDto} from "../../Modules/order/dto/update-order.dto";
 import {UserService} from "../../Services/user/user.service";
 import {OrderDto} from "../../Modules/order/dto/order.dto";
 import {OrderItemService} from "../../Services/order-item/order-item.service";
+import {MailService} from "../../Services/mails/mail.service";
 
 
 @Controller('order')
 export class OrderController {
     constructor(private readonly orderService: OrderService,
                 private readonly userService: UserService,
-                private readonly orderItemService: OrderItemService
+                private readonly orderItemService: OrderItemService,
+                private readonly mailService: MailService
                 ) {
     }
 
@@ -27,6 +29,15 @@ export class OrderController {
         const products = createOrderDto.data.products;
         const user = createOrderDto.data.user;
         const total = createOrderDto.data.totalAmount;
+        const orderText: string[] = []
+        orderText.push("Salut " + user.firstName + "\n");
+        orderText.push("Your order at Boutique Kimpa has been successfully processed. " +
+            "You will receive in the next 4 days the articles in the following table: \n");
+
+        // Add header row of articles Table
+        orderText.push('| Name        | Quantity | Price  | Amount |');
+        orderText.push('|-------------|----------|--------|--------|');
+
         console.log('createOrderDto.data.products: ', products);
         await this.userService.update(user.id, user);
         let orderItem = [];
@@ -37,15 +48,23 @@ export class OrderController {
             if (Array.isArray(products)) {
                 console.log('New order: ', ord);
                 let index = 0;
-                products.forEach(product => {
-                    orderItem[index] = this.orderItemService.create({
+                for (const product of products) {
+                    orderItem[index] = await this.orderItemService.create({
                         orderId: ord.dataValues.id,
                         productId: product.id,
                         quantity: product.detailsOfChoice.quantity,
                         unitPrice: product.price
                     })
+                    const amount = product.detailsOfChoice.quantity * product.price;
+                    orderText.push(`| ${product.name} | ${product.detailsOfChoice.quantity}        | ${product.price}      | ${amount}      |`);
                     ++index;
-                })
+                }
+                // Add total row of articles Table
+                orderText.push('| Total                           |             |             | ' + total + '      |');
+                orderText.push('\n' + 'We look forward to your next visit! \n')
+                orderText.push('\n Best Regard \n Kimpa')
+
+                await this.mailService.sendMailForCheckout(user.email, 'Your order at the Kimpa shop', orderText)
             } else {
                 orderItem[0] = await this.orderItemService.create({
                     orderId: ord.dataValues.id,
@@ -53,6 +72,13 @@ export class OrderController {
                     quantity: products.detailsOfChoice.quantity,
                     unitPrice: products.price
                 })
+                const amount = products.detailsOfChoice.quantity * products.price;
+                orderText.push(`| ${products.name} | ${products.detailsOfChoice.quantity}        | ${products.price}      | ${amount}      |`);
+                // Add total row of articles Table
+                orderText.push('| Total                           |             |             | ' + total + '      |');
+                orderText.push('\n' + 'We look forward to your next visit! \n')
+                orderText.push('\n Best Regard \n Kimpa')
+                await this.mailService.sendMailForCheckout(user.email, 'Your order at the Kimpa shop', orderText)
             }
         });
 

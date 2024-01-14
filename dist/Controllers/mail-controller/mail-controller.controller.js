@@ -23,7 +23,7 @@ let MailControllerController = class MailControllerController {
         try {
             const { to, subject, text } = emailData;
             await this.mailService.sendMail(to, subject, text);
-            return 'Email sent successfully';
+            return { response: 'Email sent successfully !' };
         }
         catch (error) {
             throw new Error(`Failed to send email: ${error.message}`);

@@ -6,5 +6,7 @@ export declare class MailControllerController {
         to: string;
         subject: string;
         text: string;
-    }): Promise<string>;
+    }): Promise<{
+        response: string;
+    }>;
 }

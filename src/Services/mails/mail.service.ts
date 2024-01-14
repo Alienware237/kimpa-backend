@@ -37,4 +37,23 @@ export class MailService {
             }
         });
     }
+
+    async sendMailForCheckout(to: string, subject: string, text: string[]): Promise<void> {
+        const mailOptions = {
+            from: 'piamkevin67@gmail.com',
+            to,
+            subject,
+            text: text.join('\n'), // Join the array elements into a single string
+        };
+
+        await this.transporter.sendMail(mailOptions, (err, info) => {
+            if (err) {
+                console.log(err);
+                return true;
+            } else {
+                console.log('Email sent: ' + info.response);
+                return false;
+            }
+        });
+    }
 }

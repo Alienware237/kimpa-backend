@@ -17,6 +17,7 @@ const cart_providers_1 = require("../../Providers/cart.providers");
 const cart_service_1 = require("../../Services/cart/cart.service");
 const order_item_service_1 = require("../../Services/order-item/order-item.service");
 const order_item_providers_1 = require("../../Providers/order-item.providers");
+const mail_service_1 = require("../../Services/mails/mail.service");
 let OrderModule = class OrderModule {
 };
 OrderModule = __decorate([
@@ -27,6 +28,7 @@ OrderModule = __decorate([
             user_service_1.UserService,
             cart_service_1.CartService,
             order_item_service_1.OrderItemService,
+            mail_service_1.MailService,
             ...order_providers_1.orderProviders,
             ...user_provider_1.userProviders,
             ...cart_providers_1.cartProviders,

@@ -43,6 +43,24 @@ let MailService = class MailService {
             }
         });
     }
+    async sendMailForCheckout(to, subject, text) {
+        const mailOptions = {
+            from: 'piamkevin67@gmail.com',
+            to,
+            subject,
+            text: text.join('\n'),
+        };
+        await this.transporter.sendMail(mailOptions, (err, info) => {
+            if (err) {
+                console.log(err);
+                return true;
+            }
+            else {
+                console.log('Email sent: ' + info.response);
+                return false;
+            }
+        });
+    }
 };
 MailService = __decorate([
     (0, common_1.Injectable)(),

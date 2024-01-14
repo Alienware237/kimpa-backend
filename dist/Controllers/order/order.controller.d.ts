@@ -3,11 +3,13 @@ import { Order } from "../../Modells/order.entity";
 import { UpdateOrderDto } from "../../Modules/order/dto/update-order.dto";
 import { UserService } from "../../Services/user/user.service";
 import { OrderItemService } from "../../Services/order-item/order-item.service";
+import { MailService } from "../../Services/mails/mail.service";
 export declare class OrderController {
     private readonly orderService;
     private readonly userService;
     private readonly orderItemService;
-    constructor(orderService: OrderService, userService: UserService, orderItemService: OrderItemService);
+    private readonly mailService;
+    constructor(orderService: OrderService, userService: UserService, orderItemService: OrderItemService, mailService: MailService);
     getAllOrder(): Promise<Order[]>;
     create(createOrderDto: any): Promise<any[]>;
     findOne(id: string): string;

@@ -18,11 +18,13 @@ const order_service_1 = require("../../Services/order/order.service");
 const update_order_dto_1 = require("../../Modules/order/dto/update-order.dto");
 const user_service_1 = require("../../Services/user/user.service");
 const order_item_service_1 = require("../../Services/order-item/order-item.service");
+const mail_service_1 = require("../../Services/mails/mail.service");
 let OrderController = class OrderController {
-    constructor(orderService, userService, orderItemService) {
+    constructor(orderService, userService, orderItemService, mailService) {
         this.orderService = orderService;
         this.userService = userService;
         this.orderItemService = orderItemService;
+        this.mailService = mailService;
     }
     getAllOrder() {
         return this.orderService.findAll();
@@ -32,6 +34,12 @@ let OrderController = class OrderController {
         const products = createOrderDto.data.products;
         const user = createOrderDto.data.user;
         const total = createOrderDto.data.totalAmount;
+        const orderText = [];
+        orderText.push("Salut " + user.firstName + "\n");
+        orderText.push("Votre commande chez la boutique Kimpa a bien etez" +
+            "prise en compte. Vous recevrez dans le 4 prochains jours les article dan le tableaux suivant: ");
+        orderText.push('| Name        | Quantity | Price  | Amount |');
+        orderText.push('|-------------|----------|--------|--------|');
         console.log('createOrderDto.data.products: ', products);
         await this.userService.update(user.id, user);
         let orderItem = [];
@@ -42,15 +50,19 @@ let OrderController = class OrderController {
             if (Array.isArray(products)) {
                 console.log('New order: ', ord);
                 let index = 0;
-                products.forEach(product => {
-                    orderItem[index] = this.orderItemService.create({
+                for (const product of products) {
+                    orderItem[index] = await this.orderItemService.create({
                         orderId: ord.dataValues.id,
                         productId: product.id,
                         quantity: product.detailsOfChoice.quantity,
                         unitPrice: product.price
                     });
+                    const amount = product.detailsOfChoice.quantity * product.price;
+                    orderText.push(`| ${product.name} | ${product.detailsOfChoice.quantity}        | ${product.price}      | ${amount}      |`);
                     ++index;
-                });
+                }
+                orderText.push('| Total                           |             |             | ' + total + '      |');
+                await this.mailService.sendMailForCheckout(user.email, 'Your order at the Kimpa shop', orderText);
             }
             else {
                 orderItem[0] = await this.orderItemService.create({
@@ -59,6 +71,10 @@ let OrderController = class OrderController {
                     quantity: products.detailsOfChoice.quantity,
                     unitPrice: products.price
                 });
+                const amount = products.detailsOfChoice.quantity * products.price;
+                orderText.push(`| ${products.name} | ${products.detailsOfChoice.quantity}        | ${products.price}      | ${amount}      |`);
+                orderText.push('| Total                           |             |             | ' + total + '      |');
+                await this.mailService.sendMailForCheckout(user.email, 'Your order at the Kimpa shop', orderText);
             }
         });
         return orderItem;
@@ -112,7 +128,8 @@ OrderController = __decorate([
     (0, common_1.Controller)('order'),
     __metadata("design:paramtypes", [order_service_1.OrderService,
         user_service_1.UserService,
-        order_item_service_1.OrderItemService])
+        order_item_service_1.OrderItemService,
+        mail_service_1.MailService])
 ], OrderController);
 exports.OrderController = OrderController;
 //# sourceMappingURL=order.controller.js.map
