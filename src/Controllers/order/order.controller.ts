@@ -28,9 +28,11 @@ export class OrderController {
         console.log('createOrderDto: ', createOrderDto)
         const products = createOrderDto.data.products;
         const user = createOrderDto.data.user;
+        user.houseNumber = parseInt(user.houseNumber);
+        user.role = parseInt(user.role);
         const total = createOrderDto.data.totalAmount;
         const orderText: string[] = []
-        orderText.push("Salut " + user.firstName + "\n");
+        orderText.push("Hey " + user.firstName + "\n");
         orderText.push("Your order at Boutique Kimpa has been successfully processed. " +
             "You will receive in the next 4 days the articles in the following table: \n");
 
@@ -39,6 +41,7 @@ export class OrderController {
         orderText.push('|-------------|----------|--------|--------|');
 
         console.log('createOrderDto.data.products: ', products);
+        console.log('createUserDto.data.user: ', user);
         await this.userService.update(user.id, user);
         let orderItem = [];
         const order = await this.orderService.create({
@@ -56,7 +59,7 @@ export class OrderController {
                         unitPrice: product.price
                     })
                     const amount = product.detailsOfChoice.quantity * product.price;
-                    orderText.push(`| ${product.name} | ${product.detailsOfChoice.quantity}        | ${product.price}      | ${amount}      |`);
+                    orderText.push(`| ${product.name} | ${product.detailsOfChoice.quantity}        | ${product.price}€      | ${amount}      |`);
                     ++index;
                 }
                 // Add total row of articles Table
@@ -75,7 +78,7 @@ export class OrderController {
                 const amount = products.detailsOfChoice.quantity * products.price;
                 orderText.push(`| ${products.name} | ${products.detailsOfChoice.quantity}        | ${products.price}      | ${amount}      |`);
                 // Add total row of articles Table
-                orderText.push('| Total                           |             |             | ' + total + '      |');
+                orderText.push('| Total                         |             |             | ' + total + '€      |');
                 orderText.push('\n' + 'We look forward to your next visit! \n')
                 orderText.push('\n Best Regard \n Kimpa')
                 await this.mailService.sendMailForCheckout(user.email, 'Your order at the Kimpa shop', orderText)

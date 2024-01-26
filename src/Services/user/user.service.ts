@@ -29,6 +29,9 @@ export class UserService {
     }
 
     update(userId: number, updateUserDto: any) {
+        delete updateUserDto.id;
+        delete updateUserDto.createdAt;
+        delete updateUserDto.updatedAt;
         return this.userRepository.upsert(updateUserDto);
     }
 
