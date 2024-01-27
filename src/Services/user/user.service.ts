@@ -28,11 +28,26 @@ export class UserService {
         return `This action returns a #${id} user`;
     }
 
-    update(userId: number, updateUserDto: any) {
-        delete updateUserDto.id;
-        delete updateUserDto.createdAt;
-        delete updateUserDto.updatedAt;
-        return this.userRepository.upsert(updateUserDto);
+    update(id: number, updateUserDto: any) {
+        console.log('Update user because of checkout with id: ', id);
+        return this.userRepository.update(
+            {
+                firstName: updateUserDto.firstName,
+                lastName: updateUserDto.lastName,
+                email: updateUserDto.email,
+                password: updateUserDto.password,
+                salutation: updateUserDto.salutation,
+                street: updateUserDto.street,
+                houseNumber: updateUserDto.houseNumber,
+                zipCode: updateUserDto.zipCode,
+                city: updateUserDto.city,
+                country: updateUserDto.country,
+                phone: updateUserDto.phone,
+                role: 2,
+                cookies: updateUserDto.cookies
+            },
+            {returning: undefined, where: { id } }
+        );
     }
 
     remove(id: number) {

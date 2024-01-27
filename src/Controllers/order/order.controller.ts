@@ -59,11 +59,11 @@ export class OrderController {
                         unitPrice: product.price
                     })
                     const amount = product.detailsOfChoice.quantity * product.price;
-                    orderText.push(`| ${product.name} | ${product.detailsOfChoice.quantity}        | ${product.price}€      | ${amount}      |`);
+                    orderText.push(`| ${product.name} | ${product.detailsOfChoice.quantity}        | ${product.price}€      | ${amount}€      |`);
                     ++index;
                 }
                 // Add total row of articles Table
-                orderText.push('| Total                           |             |             | ' + total + '      |');
+                orderText.push('| Total                           |             |             | ' + (total<100 ? total + ' + 3€': total + '€') +'      |');
                 orderText.push('\n' + 'We look forward to your next visit! \n')
                 orderText.push('\n Best Regard \n Kimpa')
 

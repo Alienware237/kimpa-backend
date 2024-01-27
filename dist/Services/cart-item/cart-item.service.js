@@ -51,6 +51,7 @@ let CartItemService = class CartItemService {
         });
     }
     async remove(cartId, productId, detailsOfChoice) {
+        console.log('Calling remove function for cartId: ' + cartId);
         const substring = `"selectedSize":"${JSON.parse(detailsOfChoice).selectedSize}"`;
         return await this.cartItemRepository.destroy({
             where: { productId,

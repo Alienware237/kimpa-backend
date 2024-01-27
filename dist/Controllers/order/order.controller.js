@@ -35,12 +35,9 @@ let OrderController = class OrderController {
         const user = createOrderDto.data.user;
         user.houseNumber = parseInt(user.houseNumber);
         user.role = parseInt(user.role);
-        delete user.id;
-        delete user.createdAt;
-        delete user.updatedAt;
         const total = createOrderDto.data.totalAmount;
         const orderText = [];
-        orderText.push("Salut " + user.firstName + "\n");
+        orderText.push("Hey " + user.firstName + "\n");
         orderText.push("Your order at Boutique Kimpa has been successfully processed. " +
             "You will receive in the next 4 days the articles in the following table: \n");
         orderText.push('| Name        | Quantity | Price  | Amount |');
@@ -64,10 +61,10 @@ let OrderController = class OrderController {
                         unitPrice: product.price
                     });
                     const amount = product.detailsOfChoice.quantity * product.price;
-                    orderText.push(`| ${product.name} | ${product.detailsOfChoice.quantity}        | ${product.price}      | ${amount}      |`);
+                    orderText.push(`| ${product.name} | ${product.detailsOfChoice.quantity}        | ${product.price}€      | ${amount}€      |`);
                     ++index;
                 }
-                orderText.push('| Total                           |             |             | ' + total + '      |');
+                orderText.push('| Total                           |             |             | ' + (total < 100 ? total + ' + 3€' : total + '€') + '      |');
                 orderText.push('\n' + 'We look forward to your next visit! \n');
                 orderText.push('\n Best Regard \n Kimpa');
                 await this.mailService.sendMailForCheckout(user.email, 'Your order at the Kimpa shop', orderText);
@@ -81,7 +78,7 @@ let OrderController = class OrderController {
                 });
                 const amount = products.detailsOfChoice.quantity * products.price;
                 orderText.push(`| ${products.name} | ${products.detailsOfChoice.quantity}        | ${products.price}      | ${amount}      |`);
-                orderText.push('| Total                           |             |             | ' + total + '      |');
+                orderText.push('| Total                         |             |             | ' + total + '€      |');
                 orderText.push('\n' + 'We look forward to your next visit! \n');
                 orderText.push('\n Best Regard \n Kimpa');
                 await this.mailService.sendMailForCheckout(user.email, 'Your order at the Kimpa shop', orderText);

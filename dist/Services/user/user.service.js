@@ -28,8 +28,23 @@ let UserService = class UserService {
     findOne(id) {
         return `This action returns a #${id} user`;
     }
-    update(userId, updateUserDto) {
-        return this.userRepository.upsert(updateUserDto);
+    update(id, updateUserDto) {
+        console.log('Update user because of checkout with id: ', id);
+        return this.userRepository.update({
+            firstName: updateUserDto.firstName,
+            lastName: updateUserDto.lastName,
+            email: updateUserDto.email,
+            password: updateUserDto.password,
+            salutation: updateUserDto.salutation,
+            street: updateUserDto.street,
+            houseNumber: updateUserDto.houseNumber,
+            zipCode: updateUserDto.zipCode,
+            city: updateUserDto.city,
+            country: updateUserDto.country,
+            phone: updateUserDto.phone,
+            role: 2,
+            cookies: updateUserDto.cookies
+        }, { returning: undefined, where: { id } });
     }
     remove(id) {
         return `This action removes a #${id} user`;
