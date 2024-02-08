@@ -54,7 +54,18 @@ let ProductService = class ProductService {
         }
         if (filter.description) {
             console.log('filter for description !!');
-            where['description'] = { [sequelize_1.Op.like]: `%${filter.description}%` };
+            if (Array.isArray(filter.description)) {
+                const descriptionConditions = filter.description.map(description => ({
+                    description: { [sequelize_1.Op.like]: `%${description}%` }
+                }));
+                const where = {
+                    [sequelize_1.Op.or]: descriptionConditions
+                };
+                console.log('descriptionConditions: ', descriptionConditions);
+            }
+            else {
+                where['description'] = { [sequelize_1.Op.like]: `%${filter.description}%` };
+            }
         }
         if (filter.minPrice && filter.maxPrice) {
             where['price'] = { [sequelize_1.Op.gte]: minPrice, [sequelize_1.Op.lte]: maxPrice };

@@ -95,7 +95,18 @@ export class ProductService {
 
         if (filter.description) {
             console.log('filter for description !!');
-            where['description'] = { [Op.like]: `%${filter.description}%` };
+            if (Array.isArray(filter.description)) {
+                // Assuming filter.descriptions is an array of strings
+                const descriptionConditions = filter.description.map(description => ({
+                    description: { [Op.like]: `%${description}%` }
+                }));
+
+                const where = {
+                    [Op.or]: descriptionConditions
+                };
+            }else {
+                where['description'] = { [Op.like]: `%${filter.description}%` };
+            }
         }
 
         if (filter.minPrice && filter.maxPrice) {
