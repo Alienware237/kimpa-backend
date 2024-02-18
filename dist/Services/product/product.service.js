@@ -44,7 +44,7 @@ let ProductService = class ProductService {
         });
     }
     async findAllByQuery(filter) {
-        const where = {};
+        let where = {};
         const maxPrice = +filter.maxPrice;
         const minPrice = +filter.minPrice;
         console.log('filter for all: ', filter);
@@ -55,13 +55,14 @@ let ProductService = class ProductService {
         if (filter.description) {
             console.log('filter for description !!');
             if (Array.isArray(filter.description)) {
-                const descriptionConditions = filter.description.map(description => ({
+                let descriptionConditions;
+                descriptionConditions = filter.description.map(description => ({
                     description: { [sequelize_1.Op.like]: `%${description}%` }
                 }));
-                const where = {
+                console.log('descriptionConditions: ', descriptionConditions);
+                where = {
                     [sequelize_1.Op.or]: descriptionConditions
                 };
-                console.log('descriptionConditions: ', descriptionConditions);
             }
             else {
                 where['description'] = { [sequelize_1.Op.like]: `%${filter.description}%` };
@@ -86,6 +87,7 @@ let ProductService = class ProductService {
         return this.productRepository.findAll(findOptions);
     }
     update(productId, updateProductDto) {
+        console.log('ProductId for product to update: ', productId);
         return this.productRepository.upsert(updateProductDto);
     }
     remove(id) {

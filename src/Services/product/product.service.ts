@@ -83,7 +83,7 @@ export class ProductService {
 
 
     async findAllByQuery(filter: any) {
-        const where = {};
+        let where = {};
         const maxPrice = +filter.maxPrice;
         const minPrice = +filter.minPrice;
 
@@ -97,11 +97,11 @@ export class ProductService {
             console.log('filter for description !!');
             if (Array.isArray(filter.description)) {
                 // Assuming filter.descriptions is an array of strings
-                const descriptionConditions = filter.description.map(description => ({
+                let descriptionConditions;
+                descriptionConditions = filter.description.map(description => ({
                     description: { [Op.like]: `%${description}%` }
                 }));
-
-                const where = {
+                where = {
                     [Op.or]: descriptionConditions
                 };
             }else {
@@ -130,6 +130,7 @@ export class ProductService {
     }
 
     update(productId: number, updateProductDto: any) {
+        console.log('ProductId for product to update: ', productId)
         return this.productRepository.upsert(updateProductDto);
     }
 
