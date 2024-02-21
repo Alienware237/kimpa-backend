@@ -59,7 +59,6 @@ let ProductService = class ProductService {
                 descriptionConditions = filter.description.map(description => ({
                     description: { [sequelize_1.Op.like]: `%${description}%` }
                 }));
-                console.log('descriptionConditions: ', descriptionConditions);
                 where = {
                     [sequelize_1.Op.or]: descriptionConditions
                 };

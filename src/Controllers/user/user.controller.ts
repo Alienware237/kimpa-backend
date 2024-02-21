@@ -97,7 +97,13 @@ export class UserController {
             console.log('itemInCarts: ', itemInCarts);
             for (const itemC of itemInCarts) {
                 const searchResult = await this.productService.findById(itemC.dataValues.productId);
-                listOfArticle.push(searchResult[0]);
+                console.log('searchResult: ', searchResult[0]);
+
+                if (searchResult[0] != undefined) {
+                    listOfArticle.push(searchResult[0]);
+                }else {
+                    listOfArticle.push(searchResult.dataValues);
+                }
             }
 
             console.log('listOfArticle: ', listOfArticle);
