@@ -32,7 +32,6 @@ let UserController = class UserController {
     }
     create(userDto) {
         try {
-            console.log('try to create a User !!!!!');
             const userData = JSON.parse(userDto.User);
             const userDto_new = new user_dto_1.UserDto();
             if (userData.cookie) {
@@ -84,13 +83,7 @@ let UserController = class UserController {
             console.log('itemInCarts: ', itemInCarts);
             for (const itemC of itemInCarts) {
                 const searchResult = await this.productService.findById(itemC.dataValues.productId);
-                console.log('searchResult: ', searchResult[0]);
-                if (searchResult[0] != undefined) {
-                    listOfArticle.push(searchResult[0]);
-                }
-                else {
-                    listOfArticle.push(searchResult.dataValues);
-                }
+                listOfArticle.push(searchResult[0]);
             }
             console.log('listOfArticle: ', listOfArticle);
             for (const itemC of itemInCarts) {
@@ -111,7 +104,7 @@ let UserController = class UserController {
         }
     }
     async getUserByCookie(cookie) {
-        console.log('param1 cookie: ', cookie);
+        console.log('param1: ', cookie);
         try {
             let user = (await this.userService.findOneByCookie(cookie));
             user = user ? user.dataValues : null;
@@ -123,11 +116,8 @@ let UserController = class UserController {
                 const itemInCarts = await this.cartItemsService.findAll(cart.id);
                 console.log('itemInCarts: ', itemInCarts);
                 for (const itemC of itemInCarts) {
-                    await this.productService.findById(itemC.dataValues.productId).then(product => {
-                        listOfArticle.push(product.dataValues);
-                    }).catch(err => {
-                        console.log('Error occured by finding a product by id from ItemCart list:', err);
-                    });
+                    const searchResult = await this.productService.findById(itemC.dataValues.productId);
+                    listOfArticle.push(searchResult[0]);
                 }
                 console.log('listOfArticle: ', listOfArticle);
                 for (const itemC of itemInCarts) {

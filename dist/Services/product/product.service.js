@@ -44,41 +44,22 @@ let ProductService = class ProductService {
         });
     }
     async findAllByQuery(filter) {
-        let where = {};
-        const maxPrice = +filter.maxPrice;
-        const minPrice = +filter.minPrice;
-        console.log('filter for all: ', filter);
+        const where = {};
         if (filter.category) {
-            console.log('filter for category !!');
-            where['category'] = { [sequelize_1.Op.eq]: `${filter.category}` };
+            where['category'] = { [sequelize_1.Op.like]: `%${filter.category}%` };
         }
         if (filter.description) {
-            console.log('filter for description !!');
-            if (Array.isArray(filter.description)) {
-                let descriptionConditions;
-                descriptionConditions = filter.description.map(description => ({
-                    description: { [sequelize_1.Op.like]: `%${description}%` }
-                }));
-                where = {
-                    [sequelize_1.Op.or]: descriptionConditions
-                };
+            where['description'] = { [sequelize_1.Op.like]: `%${filter.description}%` };
+        }
+        if (filter.minPrice) {
+            where['price'] = { [sequelize_1.Op.gt]: filter.minPrice };
+        }
+        if (filter.maxPrice) {
+            if (!where['price']) {
+                where['price'] = {};
             }
-            else {
-                where['description'] = { [sequelize_1.Op.like]: `%${filter.description}%` };
-            }
+            where['price'] = Object.assign(Object.assign({}, where['price']), { [sequelize_1.Op.lt]: filter.maxPrice });
         }
-        if (filter.minPrice && filter.maxPrice) {
-            where['price'] = { [sequelize_1.Op.gte]: minPrice, [sequelize_1.Op.lte]: maxPrice };
-        }
-        else if (filter.minPrice) {
-            console.log('filter for minPrice !!', minPrice);
-            where['price'] = { [sequelize_1.Op.gte]: minPrice };
-        }
-        else if (filter.maxPrice) {
-            console.log('filter for maxPrice !!', maxPrice);
-            where['price'] = { [sequelize_1.Op.lte]: maxPrice };
-        }
-        console.log('where: ', where);
         const findOptions = {
             rejectOnEmpty: undefined,
             where,
@@ -86,7 +67,6 @@ let ProductService = class ProductService {
         return this.productRepository.findAll(findOptions);
     }
     update(productId, updateProductDto) {
-        console.log('ProductId for product to update: ', productId);
         return this.productRepository.upsert(updateProductDto);
     }
     remove(id) {
