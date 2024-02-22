@@ -114,7 +114,6 @@ let UserController = class UserController {
             if (user) {
                 const cart = await this.cartService.findOne(user.id);
                 const itemInCarts = await this.cartItemsService.findAll(cart.id);
-                console.log('itemInCarts: ', itemInCarts);
                 for (const itemC of itemInCarts) {
                     const searchResult = await this.productService.findById(itemC.dataValues.productId);
                     console.log('searchResult.dataValues: ', searchResult.dataValues);
