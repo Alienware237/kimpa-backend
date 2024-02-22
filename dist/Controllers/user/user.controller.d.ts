@@ -21,7 +21,7 @@ export declare class UserController {
         data: any[];
     }>;
     findOne(id: string): string;
-    update(id: string, updateUserDto: UpdateUserDto): Promise<[User, boolean]>;
+    update(id: string, updateUserDto: UpdateUserDto): Promise<[affectedCount: number, affectedRows: User[]]>;
     remove(id: string): string;
-    updateUser(userId: number, userDto: any): Promise<[User, boolean]>;
+    updateUser(userId: number, userDto: any): Promise<[affectedCount: number, affectedRows: User[]]>;
 }

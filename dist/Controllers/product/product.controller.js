@@ -81,26 +81,23 @@ let ProductController = class ProductController {
         return this.productService.findById(+id);
     }
     async findProductWithUserId(userId) {
+        const dataItemInCart = [];
+        let user;
         try {
-            const listOfArticle = [];
-            const dataItemInCart = [];
-            const user = await this.userService.findOneById(userId);
+            user = await this.userService.findOneById(userId);
             const cart = await this.cartService.findOne(userId);
             console.log('cart by checkout: ', cart);
-            const itemInCarts = await this.cartItemService.findAll(cart.id);
-            for (const itemC of itemInCarts) {
-                const searchResult = await this.productService.findById(itemC.dataValues.productId);
-                listOfArticle.push(searchResult[0]);
-            }
-            console.log('listOfArticle: ', listOfArticle);
-            for (const itemC of itemInCarts) {
-                const article = listOfArticle.find(article => article.id === itemC.dataValues.productId);
-                if (article) {
-                    article['numberOfArticle'] = itemC.quantity;
-                    article['detailsOfChoice'] = itemC.detailsOfChoice;
-                    dataItemInCart.push(article);
+            await this.cartItemService.findAll(cart.id).then(async (itemInCarts) => {
+                for (const itemC of itemInCarts) {
+                    await this.productService.findById(itemC.dataValues.productId).then(searchResult => {
+                        let article = searchResult.dataValues;
+                        article['numberOfArticle'] = itemC.quantity;
+                        article['detailsOfChoice'] = itemC.detailsOfChoice;
+                        console.log('searchResult: ', article);
+                        dataItemInCart.push(article);
+                    });
                 }
-            }
+            });
             console.log('user by getting cookie: ', dataItemInCart);
             return { user, dataItemInCart };
         }

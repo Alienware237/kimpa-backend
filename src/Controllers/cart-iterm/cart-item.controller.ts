@@ -38,17 +38,21 @@ export class CartItemController {
 
       let index = 0;
       for (const itemC of itemInCarts) {
-        let article = (await this.productService.findById(itemC.dataValues.productId))[0];
-        console.log('itemC.details' + 'OfChoice ' + index, ': ', itemC.detailsOfChoice);
-        console.log('article In Item ' + index + ' befor: ', article);
-        if (article) {
-          article['insertedAt'] = itemC.createdAt;
-          article['numberOfArticle'] = itemC.quantity;
-          article['detailsOfChoice'] = itemC.detailsOfChoice;
-          console.log('article In Item ' + index + ' After: ', article);
-          ++index;
-          dataItemInCart.push(article);
-        }
+        await this.productService.findById(itemC.dataValues.productId)
+            .then( articles => {
+              console.log('article by for loop:', articles);
+              const article = articles.dataValues;
+              console.log('itemC.details' + 'OfChoice ' + index, ': ', itemC.detailsOfChoice);
+              console.log('article In Item ' + index + ' befor: ', article);
+              article['insertedAt'] = itemC.createdAt;
+              article['numberOfArticle'] = itemC.quantity;
+              article['detailsOfChoice'] = itemC.detailsOfChoice;
+              console.log('article In Item ' + index + ' After: ', article);
+              ++index;
+              dataItemInCart.push(article);
+            }).catch(err => {
+              console.log('error occurred by collect articles in cart: ', err);
+            });
       }
       return {dataItemInCart, cartId: cart.id};
     } catch (error) {

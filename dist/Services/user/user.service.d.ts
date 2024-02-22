@@ -7,7 +7,7 @@ export declare class UserService {
     constructor(userRepository: typeof User, cartService: CartService);
     findAll(): Promise<User[]>;
     findOne(id: number): string;
-    update(userId: number, updateUserDto: any): Promise<[User, boolean]>;
+    update(id: number, updateUserDto: any): Promise<[affectedCount: number, affectedRows: User[]]>;
     remove(id: number): string;
     create(user: UserDto): Promise<User>;
     findOneByEmail(email: string): Promise<User>;

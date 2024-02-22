@@ -83,26 +83,43 @@ export class ProductService {
 
 
     async findAllByQuery(filter: any) {
-        const where = {};
+        let where = {};
+        const maxPrice = +filter.maxPrice;
+        const minPrice = +filter.minPrice;
 
+        console.log('filter for all: ', filter);
         if (filter.category) {
-            where['category'] = { [Op.like]: `%${filter.category}%` };
+            console.log('filter for category !!');
+            where['category'] = { [Op.eq]: `${filter.category}` };
         }
 
         if (filter.description) {
-            where['description'] = { [Op.like]: `%${filter.description}%` };
-        }
-
-        if (filter.minPrice) {
-            where['price'] = { [Op.gt]: filter.minPrice };
-        }
-
-        if (filter.maxPrice) {
-            if (!where['price']) {
-                where['price'] = {};
+            console.log('filter for description !!');
+            if (Array.isArray(filter.description)) {
+                // Assuming filter.descriptions is an array of strings
+                let descriptionConditions;
+                descriptionConditions = filter.description.map(description => ({
+                    description: { [Op.like]: `%${description}%` }
+                }));
+                where = {
+                    [Op.or]: descriptionConditions
+                };
+            }else {
+                where['description'] = { [Op.like]: `%${filter.description}%` };
             }
-            where['price'] = { ...where['price'], [Op.lt]: filter.maxPrice };
         }
+
+        if (filter.minPrice && filter.maxPrice) {
+            where['price'] = { [Op.gte]: minPrice, [Op.lte]: maxPrice };
+        } else if (filter.minPrice) {
+            console.log('filter for minPrice !!', minPrice);
+            where['price'] = { [Op.gte]: minPrice };
+        }else if (filter.maxPrice) {
+            console.log('filter for maxPrice !!', maxPrice);
+            where['price'] = { [Op.lte]: maxPrice };
+        }
+
+        console.log('where: ', where);
 
         const findOptions = {
             rejectOnEmpty: undefined,
@@ -113,6 +130,7 @@ export class ProductService {
     }
 
     update(productId: number, updateProductDto: any) {
+        console.log('ProductId for product to update: ', productId)
         return this.productRepository.upsert(updateProductDto);
     }
 

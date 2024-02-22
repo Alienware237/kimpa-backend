@@ -55,6 +55,7 @@ export class CartItemService {
   }
 
   async remove(cartId: number, productId: number, detailsOfChoice: string) {
+    console.log('Calling remove function for cartId: ' + cartId);
     const substring = `"selectedSize":"${JSON.parse(detailsOfChoice).selectedSize}"`;
     return await this.cartItemRepository.destroy<CartItem>({
       where: {productId,

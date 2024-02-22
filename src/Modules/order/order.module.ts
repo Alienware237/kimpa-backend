@@ -8,6 +8,7 @@ import {cartProviders} from "../../Providers/cart.providers";
 import {CartService} from "../../Services/cart/cart.service";
 import {OrderItemService} from "../../Services/order-item/order-item.service";
 import {orderItemProviders} from "../../Providers/order-item.providers";
+import {MailService} from "../../Services/mails/mail.service";
 
 @Module({
   controllers: [OrderController],
@@ -16,6 +17,7 @@ import {orderItemProviders} from "../../Providers/order-item.providers";
       UserService,
       CartService,
       OrderItemService,
+      MailService,
       ...orderProviders,
       ...userProviders,
       ...cartProviders,

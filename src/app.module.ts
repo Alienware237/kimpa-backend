@@ -52,6 +52,8 @@ import {OrderItemController} from "./Controllers/order-item/order-item.controlle
 import {OrderItemService} from "./Services/order-item/order-item.service";
 import {orderItemProviders} from "./Providers/order-item.providers";
 import {BackblazeService} from "./Services/Backblaze/backblaze.service";
+import {MailControllerController} from "./Controllers/mail-controller/mail-controller.controller";
+import {MailService} from "./Services/mails/mail.service";
 
 @Module({
   imports: [
@@ -88,7 +90,8 @@ import {BackblazeService} from "./Services/Backblaze/backblaze.service";
       OrderItemController,
       ReviewController,
       UserController,
-      AdministratorController
+      AdministratorController,
+      MailControllerController
   ],
   providers: [AppService,
       PostService,
@@ -106,6 +109,7 @@ import {BackblazeService} from "./Services/Backblaze/backblaze.service";
       JwtStrategy,
       ElasticsearchIndexingService,
       BackblazeService,
+      MailService,
       ...databaseProviders,
       ...postProviders,
       ...productProviders,
