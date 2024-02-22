@@ -83,7 +83,7 @@ let UserController = class UserController {
             console.log('itemInCarts: ', itemInCarts);
             for (const itemC of itemInCarts) {
                 const searchResult = await this.productService.findById(itemC.dataValues.productId);
-                listOfArticle.push(searchResult[0]);
+                listOfArticle.push(searchResult.dataValues);
             }
             console.log('listOfArticle: ', listOfArticle);
             for (const itemC of itemInCarts) {
